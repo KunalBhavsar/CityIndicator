@@ -1,3 +1,5 @@
+package co.cityindicator;
+
 import android.app.Application;
 
 import co.cityindicator.db.CityIndicatorDatabase;
