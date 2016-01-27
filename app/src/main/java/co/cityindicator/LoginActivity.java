@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -38,6 +40,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+    private static final String TAG = LoginActivity.class.getSimpleName();
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -65,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -309,13 +314,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             ContentResolver cr = getContentResolver();
             Cursor emailCur = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
                     null, null, null);
-            while (emailCur.moveToNext()) {
-                String email = emailCur.getString(emailCur.getColumnIndex(ContactsContract
-                        .CommonDataKinds.Email.DATA));
-                emailAddressCollection.add(email);
+            if(emailCur != null) {
+                while (emailCur.moveToNext()) {
+                    String email = emailCur.getString(emailCur.getColumnIndex(ContactsContract
+                            .CommonDataKinds.Email.DATA));
+                    emailAddressCollection.add(email);
+                }
+                emailCur.close();
             }
-            emailCur.close();
-
             return emailAddressCollection;
         }
 
